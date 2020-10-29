@@ -1,0 +1,11 @@
+.chart {
+  float : left;
+  background: white;
+  fill: darkblue;
+}
+
+body {
+  background-color: lightblue;
+  color: darkblue;
+  font-family: "Comic Sans MS", cursive, sans-serif,"Times New Roman", Arial, Helvetica;
+}
