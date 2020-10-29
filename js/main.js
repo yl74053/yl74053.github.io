@@ -133,13 +133,10 @@ d3.dsv("," ,"./data/filtered_movies.csv" , function(d) {
             d3.select(this).style("fill", "steelblue");
             yearText.text("# Movies: ")
         })
-        .on("pointerenter", function(d) {
+        .on("touchstart", function(d) {
+            chart1.selectAll(".bar").style("fill", "steelblue")
             d3.select(this).style("fill", "yellow");
             yearText.text("# Movies: "+ d.value)
-        })
-        .on("pointerout", function(d) {
-            d3.select(this).style("fill", "steelblue");
-            yearText.text("# Movies: ")
         })
 
 
