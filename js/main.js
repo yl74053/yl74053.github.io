@@ -1,4 +1,5 @@
-var margin = {top: 40, right: 20, bottom: 60, left: 100};
+var margin = {top: 40, right: 20, bottom: 60, left: 80};
+var marginPlot = {top: 40, right: 80, bottom: 60, left: 60};
 
 var width = 500
 var height = 400
@@ -11,10 +12,14 @@ var radius = (Math.min(width, height)/2 - 30);
 var widthPlot = 600;
 var heightPlot = 600;
 
+var widthPlot1 = widthPlot - marginPlot.left - marginPlot.right;
+var heightPlot1 = heightPlot - marginPlot.top - marginPlot.bottom;
+
 var curValue = "";
 
 var chart1 = d3.select("#chart1")
     .append("svg")
+    .style("background", "white")
     .attr("width",width)
     .attr("height",height)
     .append("g")
@@ -22,10 +27,19 @@ var chart1 = d3.select("#chart1")
 
 var chart2 = d3.select("#chart2")
     .append("svg")
-    .attr("width",width)
+    .style("background", "white")
+    .attr("width",width - margin.left)
     .attr("height",height)
     .append("g")
-    .attr("transform", "translate(" + margin.left + " , " + margin.top + " )");
+    .attr("transform", "translate(" + 0 + " , " + margin.top + " )");
+
+var chart3 = d3.select("#chart3")
+    .append("svg")
+    .style("background", "white")
+    .attr("width",widthPlot)
+    .attr("height",heightPlot)
+    .append("g")
+    .attr("transform", "translate(" + marginPlot.left + " , " + marginPlot.top + " )");
 
 d3.dsv("," ,"./data/filtered_movies.csv" , function(d) {
 
@@ -47,6 +61,8 @@ d3.dsv("," ,"./data/filtered_movies.csv" , function(d) {
     }
 
 }).then(function(csv){
+
+    //data manipulation
 
     var moviesByCountry = d3.nest()
         .key(function(d){
@@ -82,7 +98,7 @@ d3.dsv("," ,"./data/filtered_movies.csv" , function(d) {
 
     var moviesByCountryfilter = d3.nest()
         .key(function(d){
-            if (d.value > 5)
+            if (d.value > 10)
                 return d.key;
             else
                 otherCountry[countCountry] = d.key;
@@ -97,7 +113,9 @@ d3.dsv("," ,"./data/filtered_movies.csv" , function(d) {
             return d3.descending(x.value, y.value);
         })
 
-    console.log(moviesByCountryfilter)
+    //data manipulation end
+
+    //Bar chart
 
     var xScale = d3.scaleBand()
         .domain(moviesByYear.map(d => d.key))
@@ -169,13 +187,152 @@ d3.dsv("," ,"./data/filtered_movies.csv" , function(d) {
         .style("font-size", "12px")
         .text("Number of Movies");
 
+    //End Barchart
+
+    //Piechart
+
+    var pie = d3.pie()
+        .value(d => d.value)
+
+    var data_ready = pie(moviesByCountryfilter)
+
+    var pie_arc = d3.arc().innerRadius(0).outerRadius(radius - 40)
+
+    var colorScale = d3.schemeSet3;
+
+    var widthPie = width / 2 - margin.left/2
+
+    var heightPie = height / 2 - margin.top/2
+
+    var countryText = chart2.append("text")
+        .attr("x", width1 - 140)
+        .attr("y",  30)
+        .style("font-size", "12px")
+        .text("Country: # Movies");
+
+    chart2.selectAll(".arc")
+        .data(data_ready)
+        .enter().append("g")
+        .attr("transform", "translate(" + widthPie + "," + heightPie + ")")
+        .attr("class", "arc")
+        .append("path")
+        .attr('d', pie_arc)
+        .style("fill", d => colorScale[d.index])
+        .on("mouseover", function(d) {
+            d3.select(this).style("fill", "yellow");
+            countryText.text( d.data.key + " : " + d.data.value );
+        })
+        .on("mouseout", function(d) {
+            d3.select(this).style("fill", d => colorScale[d.index]);
+            countryText.text("Country: # Movies");
+        })
+        .on("touchstart", function(d) {
+            d3.select(this).style("fill", "yellow");
+            countryText.text( d.data.key + " : " + d.data.value );
+        })
+
+
     chart2.append("text")
         .attr("x", width1/2 - 100)
         .attr("y", -10)
         .style("font-size", "15px")
         .text("Number of Movies by Country");
 
+    //End Piechart
 
+    //Scatter Plot
 
+    var votedExtent = d3.extent(csv, function(row) { return row.num_critic_for_reviews ; });
+    var userExtent = d3.extent(csv,  function(row) { return row.num_user_for_reviews;   });
+    var scoreExtent = d3.extent(csv, function(row) { return row.imdb_score; });
+
+    var xScalePlot = d3.scaleLinear()
+        .domain(userExtent)
+        .rangeRound([0, widthPlot1]);
+
+    var yScalePlot = d3.scaleLinear()
+        .domain(scoreExtent)
+        .rangeRound([heightPlot1, 0]);
+
+    var TitleText = chart3.append("text")
+        .attr("x", widthPlot1 - 140)
+        .attr("y",  20)
+        .style("font-size", "12px")
+        .text("Movie Title: ");
+
+    var UserText = chart3.append("text")
+        .attr("x", widthPlot1 - 140)
+        .attr("y",  40)
+        .style("font-size", "12px")
+        .text("# User Reviews: ");
+
+    var UScoreText = chart3.append("text")
+        .attr("x", widthPlot1 - 140)
+        .attr("y",  60)
+        .style("font-size", "12px")
+        .text("IMDb Score: ");
+
+    var scatterPlot = chart3.selectAll(".circle")
+        .data(csv)
+        .enter().append("g")
+        .append("circle")
+        .attr("id",function(d,i) {return i;} )
+        //.attr("stroke", "steelblue")
+        .style("fill", "steelblue")
+        .attr("cx", function(d) { return xScalePlot(d.num_user_for_reviews ); })
+        .attr("cy", function(d) { return yScalePlot(d.imdb_score); })
+        .attr("r", 3)
+        .on("mouseover", function(d) {
+            d3.select(this).style("fill", "yellow");
+            //d3.select(this).attr("stroke", "yellow");
+            TitleText.text("Movie Title: " + d.movie_title)
+            UserText.text("# User Reviews: " + d.num_user_for_reviews)
+            UScoreText.text("IMDb Score: " + d.imdb_score)
+        })
+        .on("mouseout", function(d) {
+            d3.select(this).style("fill", "steelblue");
+            //d3.select(this).attr("stroke", "steelblue");
+            TitleText.text("Movie Title: " )
+            UserText.text("# User Reviews: ")
+            UScoreText.text("IMDb Score: " )
+        })
+        .on("touchstart", function(d) {
+            d3.select(this).style("fill", "yellow");
+            //d3.select(this).attr("stroke", "yellow");
+            TitleText.text("Movie Title: " + d.movie_title)
+            UserText.text("# User Reviews: " + d.num_user_for_reviews)
+            UScoreText.text("IMDb Score: " + d.imdb_score)
+        })
+
+    chart3.append("text")
+        .attr("x", widthPlot1/2 - 100)
+        .attr("y", -10)
+        .style("font-size", "15px")
+        .text("User Reviews vs IMDb Score");
+
+     chart3.append("g")
+        .attr("class", "axis")
+        .attr("transform", "translate( 0," + heightPlot1 + ")")
+        .call(d3.axisBottom(xScalePlot));
+
+    chart3.append("g")
+        .attr("class", "axis")
+        .attr("transform", "translate( 0, 0)")
+        .call(d3.axisLeft(yScalePlot));;
+
+    chart3.append("text")
+        .attr("x", widthPlot1/2 -80)
+        .attr("y", heightPlot1 + 30)
+        .style("font-size", "12px")
+        .text("Number of User Reviews");
+
+    chart3.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("x", -heightPlot1/2 - 30)
+        .attr("y", -20)
+        .style("font-size", "12px")
+        .text("IMDb Score");
+
+    //End Scatter Plot
     
 })
