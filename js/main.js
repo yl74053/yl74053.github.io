@@ -17,6 +17,8 @@ var heightPlot1 = heightPlot - marginPlot.top - marginPlot.bottom;
 
 var curValue = "";
 
+var touchstate = 0;
+
 var chart1 = d3.select("#chart1")
     .append("svg")
     .style("background", "white")
@@ -40,6 +42,12 @@ var chart3 = d3.select("#chart3")
     .attr("height",heightPlot)
     .append("g")
     .attr("transform", "translate(" + marginPlot.left + " , " + marginPlot.top + " )");
+
+var chart4 = d3.select("#chart4")
+    .append("svg")
+    .style("background", "white")
+    .attr("width", 100)
+    .attr("height",100)
 
 d3.dsv("," ,"./data/filtered_movies.csv" , function(d) {
 
@@ -369,5 +377,19 @@ d3.dsv("," ,"./data/filtered_movies.csv" , function(d) {
         .text("IMDb Score");
 
     //End Scatter Plot
+
+    //Touch state
+
+    chart4.append("g")
+        .on("touchstart", function(d) {
+            touchstate = 1;
+            d3.preventDefault();
+            const t = d3.pointers(d,this);
+        })
+        .on("touchend", function(d) {
+            touchstate = 0;
+        })
+
+    //End Touch state
     
 })
