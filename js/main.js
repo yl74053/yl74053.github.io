@@ -383,7 +383,7 @@ d3.dsv("," ,"./data/filtered_movies.csv" , function(d) {
     chart4.append("g")
         .on("touchstart", function(d) {
             touchstate = 1;
-            d3.preventDefault();
+            d3.event.preventDefault();
             const t = d3.pointers(d,this);
         })
         .on("touchend", function(d) {
