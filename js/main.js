@@ -134,13 +134,11 @@ d3.dsv("," ,"./data/filtered_movies.csv" , function(d) {
             yearText.text("# Movies: ")
         })
         .on("touchstart", function(d) {
+            d3.selectAll(".bar").style("fill", "steelblue")
             d3.select(this).style("fill", "yellow");
             yearText.text("# Movies: "+ d.value)
         })
-        .on("touchover", function(d) {
-            d3.select(this).style("fill", "steelblue");
-            yearText.text("# Movies: ")
-        })
+
 
     chart1.append("text")
         .attr("x", width1/2 - 100)
