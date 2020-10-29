@@ -161,6 +161,10 @@ d3.dsv("," ,"./data/filtered_movies.csv" , function(d) {
             d3.select(this).style("fill", "yellow");
             yearText.text("# Movies: "+ d.value)
         })
+        .on("touchend", function(d) {
+            chart1.selectAll(".bar").style("fill", "steelblue")
+            yearText.text("# Movies: ")
+        })
 
 
     chart1.append("text")
@@ -232,8 +236,18 @@ d3.dsv("," ,"./data/filtered_movies.csv" , function(d) {
             countryText.text("Country: # Movies");
         })
         .on("touchstart", function(d) {
+            chart2.selectAll(".arc").style("fill", d => colorScale[d.index]);
             d3.select(this).style("fill", "yellow");
             countryText.text( d.data.key + " : " + d.data.value );
+        })
+        .on("touchmove", function(d) {
+            chart2.selectAll(".arc").style("fill", d => colorScale[d.index]);
+            d3.select(this).style("fill", "yellow");
+            countryText.text( d.data.key + " : " + d.data.value );
+        })
+        .on("touchend", function(d) {
+            d3.select(this).style("fill", d => colorScale[d.index]);
+            countryText.text("Country: # Movies");
         })
 
 
@@ -302,11 +316,27 @@ d3.dsv("," ,"./data/filtered_movies.csv" , function(d) {
             UScoreText.text("IMDb Score: " )
         })
         .on("touchstart", function(d) {
+            d3.selectAll(".arc").style("fill", "steelblue");
             d3.select(this).style("fill", "yellow");
             //d3.select(this).attr("stroke", "yellow");
             TitleText.text("Movie Title: " + d.movie_title)
             UserText.text("# User Reviews: " + d.num_user_for_reviews)
             UScoreText.text("IMDb Score: " + d.imdb_score)
+        })
+        .on("touchmove", function(d) {
+            d3.selectAll(".arc").style("fill", "steelblue");
+            d3.select(this).style("fill", "yellow");
+            //d3.select(this).attr("stroke", "yellow");
+            TitleText.text("Movie Title: " + d.movie_title)
+            UserText.text("# User Reviews: " + d.num_user_for_reviews)
+            UScoreText.text("IMDb Score: " + d.imdb_score)
+        })
+        .on("touchend", function(d) {
+            d3.select(this).style("fill", "steelblue");
+            //d3.select(this).attr("stroke", "steelblue");
+            TitleText.text("Movie Title: " )
+            UserText.text("# User Reviews: ")
+            UScoreText.text("IMDb Score: " )
         })
 
     chart3.append("text")
