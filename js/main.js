@@ -390,7 +390,7 @@ d3.dsv("," ,"./data/filtered_movies.csv" , function(d) {
     var enablebrush = false;
 
     var brush = d3.brush()
-        .extent([[0, 0],[widthPlot, heightPlot]]);
+        .extent([[0, 0],[widthPlot1, heightPlot1]]);
 
 
     //brush.x(xScale).y(yScale);
