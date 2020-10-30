@@ -399,7 +399,7 @@ d3.dsv("," ,"./data/filtered_movies.csv" , function(d) {
         .attr("class", "brush")
         .call(brush);
 
-    //d3.selectAll(".brush").remove()
+    d3.selectAll(".brush").remove()
 
     // Register brush events
     brush
