@@ -45,9 +45,8 @@ var chart3 = d3.select("#chart3")
 
 var chart4 = d3.select("#chart4")
     .append("svg")
-    .style("background", "white")
-    .attr("width", 100)
-    .attr("height",100)
+    .attr("width", 150)
+    .attr("height",height + heightPlot)
 
 d3.dsv("," ,"./data/filtered_movies.csv" , function(d) {
 
@@ -457,8 +456,8 @@ d3.dsv("," ,"./data/filtered_movies.csv" , function(d) {
     chart4.append("g")
         .append("rect")
         .style("fill", "white")
-        .attr("height", height)
-        .attr("width", width)
+        .attr("height", height+heightPlot)
+        .attr("width", 100)
         .on("click", function(d){
             if (enablebrush) {
                 enablebrush = false;

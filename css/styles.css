@@ -1,7 +1,18 @@
-.chart {
-  float : left;
-  background: white;
-  fill: darkblue;
+#chart1 {
+    float:left;
+}
+#chart2{
+	float:left;
+}
+#chart3 {
+	float:left;
+}
+#chart4 {
+	float:left;
+}
+
+.selected {
+  fill:red;
 }
 
 body {
