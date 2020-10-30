@@ -404,10 +404,13 @@ d3.dsv("," ,"./data/filtered_movies.csv" , function(d) {
         .on("brush", brushing)          
         .on("end", brushend); 
 
-    function brushstart() {
+    function brushstart(event) {
+        event.preventDefault();
     }     
 
-    function brushing() {
+    function brushing(event) {
+
+        event.preventDefault();
         // simultaneous update during brushing
          var e = brush.extent().call();
 
@@ -438,7 +441,9 @@ d3.dsv("," ,"./data/filtered_movies.csv" , function(d) {
 
     }
 
-    function brushend() {
+    function brushend(event) {
+
+        event.preventDefault();
         // update after brusing is finished
     }
 
@@ -448,7 +453,7 @@ d3.dsv("," ,"./data/filtered_movies.csv" , function(d) {
 
     chart4.append("g")
         .append("rect")
-        .style("fill", "blue")
+        .style("fill", "white")
         .attr("height", height)
         .attr("width", width)
         .on("click", function(d){
