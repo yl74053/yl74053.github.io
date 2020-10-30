@@ -325,6 +325,7 @@ d3.dsv("," ,"./data/filtered_movies.csv" , function(d) {
             UScoreText.text("IMDb Score: " )
         })
         .on("touchstart", function(d) {
+            event.preventDefault();
             d3.selectAll(".arc").style("fill", "steelblue");
             d3.select(this).style("fill", "yellow");
             //d3.select(this).attr("stroke", "yellow");
@@ -333,6 +334,7 @@ d3.dsv("," ,"./data/filtered_movies.csv" , function(d) {
             UScoreText.text("IMDb Score: " + d.imdb_score)
         })
         .on("touchmove", function(d) {
+            event.preventDefault();
             d3.selectAll(".arc").style("fill", "steelblue");
             d3.select(this).style("fill", "yellow");
             //d3.select(this).attr("stroke", "yellow");
@@ -341,6 +343,7 @@ d3.dsv("," ,"./data/filtered_movies.csv" , function(d) {
             UScoreText.text("IMDb Score: " + d.imdb_score)
         })
         .on("touchend", function(d) {
+            event.preventDefault();
             d3.select(this).style("fill", "steelblue");
             //d3.select(this).attr("stroke", "steelblue");
             TitleText.text("Movie Title: " )
@@ -457,7 +460,6 @@ d3.dsv("," ,"./data/filtered_movies.csv" , function(d) {
         .attr("height", height)
         .attr("width", width)
         .on("click", function(d){
-            console.log("here")
             if (enablebrush) {
                 enablebrush = false;
                 d3.selectAll(".brush").remove()
@@ -473,17 +475,9 @@ d3.dsv("," ,"./data/filtered_movies.csv" , function(d) {
         })
         .on("touchstart", function(d) {
             touchstate = 1;
-            /*var brushContainer = chart3.append("g")
-                .attr("class", "brush")
-                .call(brush);
-            d3.select(this).style("fill", "blue")*/
-
-            
         })
         .on("touchend", function(d) {
             touchstate = 0;
-           /* d3.selectAll(".brush").remove()
-            d3.select(this).style("fill", "white")*/
         })
 
     //End Touch state
