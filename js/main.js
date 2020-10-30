@@ -306,6 +306,7 @@ d3.dsv("," ,"./data/filtered_movies.csv" , function(d) {
         .attr("id",function(d,i) {return i;} )
         //.attr("stroke", "steelblue")
         .style("fill", "steelblue")
+        //.attr("class", "selected")
         .attr("cx", function(d) { return xScalePlot(d.num_user_for_reviews ); })
         .attr("cy", function(d) { return yScalePlot(d.imdb_score); })
         .attr("r", 3)
@@ -347,6 +348,10 @@ d3.dsv("," ,"./data/filtered_movies.csv" , function(d) {
             UScoreText.text("IMDb Score: " )
         })
 
+    d3.selectAll(".circle").classed("selected", true)
+
+    console.log(d3.selectAll(".selected"))
+
     chart3.append("text")
         .attr("x", widthPlot1/2 - 100)
         .attr("y", -10)
@@ -378,16 +383,102 @@ d3.dsv("," ,"./data/filtered_movies.csv" , function(d) {
 
     //End Scatter Plot
 
+    //Brush 
+    var enablebrush = false;
+
+    var brush = d3.brush()
+        .extent([[0, 0],[widthPlot, heightPlot]]);
+
+
+    //brush.x(xScale).y(yScale);
+
+    var brushContainer1 = chart3.append("g")
+        .attr("class", "brush")
+        .call(brush);
+
+    //d3.selectAll(".brush").remove()
+
+    // Register brush events
+    brush
+        .on("start", brushstart)   
+        .on("brush", brushing)          
+        .on("end", brushend); 
+
+    function brushstart() {
+    }     
+
+    function brushing() {
+        // simultaneous update during brushing
+         var e = brush.extent().call();
+
+         let selectionCordinates = d3.event.selection;
+
+         let x1 = xScalePlot.invert(selectionCordinates[0][0]) 
+         let x2 = xScalePlot.invert(selectionCordinates[1][0]) 
+         let y1 = yScalePlot.invert(selectionCordinates[0][1]) 
+         let y2 = yScalePlot.invert(selectionCordinates[1][1]) 
+
+         chart3.selectAll('circle').classed("selected", function(d) {
+
+            return x1 <= d.num_critic_for_reviews  && d.num_critic_for_reviews  <= x2 &&
+                y1 <= d.imdb_score && d.imdb_score <= y2;
+
+        });
+
+
+        // change the class of node to brushed if the node is inside the brushed extent
+        /*chart3.selectAll('circle').classed("selected", function(d) {
+
+            return e[0][0] <= d.num_critic_for_reviews  && d.num_critic_for_reviews  <= e[1][0] &&
+                e[0][1] <= d.imdb_score && d.imdb_score <= e[1][1];
+
+        });
+
+        brushed_idx = chart3.selectAll("circle.selected").data().map(a => a.ID);*/
+
+    }
+
+    function brushend() {
+        // update after brusing is finished
+    }
+
+    //End Brush
+
     //Touch state
 
     chart4.append("g")
+        .append("rect")
+        .style("fill", "blue")
+        .attr("height", height)
+        .attr("width", width)
+        .on("click", function(d){
+            console.log("here")
+            if (enablebrush) {
+                enablebrush = false;
+                d3.selectAll(".brush").remove()
+                d3.select(this).style("fill", "white")
+            } else {
+                var brushContainer = chart3.append("g")
+                    .attr("class", "brush")
+                    .call(brush);
+                enablebrush = true;
+                d3.select(this).style("fill", "blue")
+            }
+
+        })
         .on("touchstart", function(d) {
             touchstate = 1;
-            d3.event.preventDefault();
-            const t = d3.pointers(d,this);
+            /*var brushContainer = chart3.append("g")
+                .attr("class", "brush")
+                .call(brush);
+            d3.select(this).style("fill", "blue")*/
+
+            
         })
         .on("touchend", function(d) {
             touchstate = 0;
+           /* d3.selectAll(".brush").remove()
+            d3.select(this).style("fill", "white")*/
         })
 
     //End Touch state
